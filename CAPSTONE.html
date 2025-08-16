@@ -1,0 +1,420 @@
+<!-- Save as dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - Alayadi Alsarea</title>
+
+  <!-- Bootstrap & Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background-color: #f4f7fc;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container-fluid {
+      position: relative;
+      min-height: 100vh;
+      margin: 0 !important;
+      padding: 0 !important;
+      z-index: 1;
+    }
+
+    .container-fluid::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-image: url('background.png');
+      background-size: 1200px;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      opacity: 0.2;
+      z-index: -1;
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 48px);
+      margin: 0;
+      padding: 0;
+    }
+
+    .sidebar {
+      background-color: #1B2C7A;
+      color: white;
+      width: 250px;
+      transition: 0.3s;
+      overflow-x: hidden;
+      flex-shrink: 0;
+    }
+
+    .sidebar.collapsed {
+      width: 100px;
+    }
+
+    .sidebar .nav-link {
+      background: white;
+      color: #000;
+      margin: 10px 20px;
+      text-align: center;
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .sidebar .nav-link:hover {
+      background: #007bff;
+      color: white;
+    }
+
+    .sidebar .nav-link.active {
+      background: #a3f2ff;
+      font-weight: bold;
+    }
+
+    .sidebar.collapsed .nav-link {
+      padding: 5px;
+      justify-content: center;
+      font-size: 0;
+    }
+
+    .sidebar.collapsed .nav-link i {
+      font-size: 1.25rem;
+      margin-right: 0;
+    }
+
+    .sidebar.collapsed .text-center,
+    .sidebar.collapsed h5,
+    .sidebar.collapsed p {
+      display: none;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      padding: 50px;
+      transition: 0.3s;
+    }
+
+    .topbar {
+      color: white;
+      background-color: #27397f;
+      margin-bottom: 0;
+    }
+
+    input.form-control {
+      background: rgba(255, 255, 255, 0.7);
+      border: none;
+      width: 300px;
+    }
+
+    .card-box {
+      border-radius: 15px;
+      padding: 20px;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .website-views-card {
+      background: rgba(40, 167, 69, 0.6);
+      backdrop-filter: blur(1px);
+    }
+
+    .total-bookings-card {
+      background: rgba(220, 53, 69, 0.6);
+      backdrop-filter: blur(1px);
+    }
+
+    .active-cleaners-card {
+      background: rgba(255, 193, 7, 0.6);
+      color: white;
+      backdrop-filter: blur(1px);
+    }
+
+    .sidebar.collapsed + .main-content {
+      margin-left: 100px; /* matches collapsed width */
+    }
+	
+    @media (max-width: 768px) {
+      .sidebar {
+        position: absolute;
+        z-index: 1050;
+        height: 100%;
+      }
+	
+      .sidebar.collapsed {
+        transform: translateX(-100%);
+      }
+    }
+
+    .earnings-card {
+      background: rgba(23, 162, 184, 0.6);
+      backdrop-filter: blur(1px);
+    }
+
+    .inventory-card,
+    .booking-card,
+    .card-reminder,
+    .card-review {
+      border-radius: 15px;
+      color: white;
+      backdrop-filter: blur(1px);
+      padding: 15px;
+    }
+
+    .inventory-card {
+      background: rgba(13, 110, 253, 0.6);
+    }
+
+    .booking-card {
+      background: rgba(33, 37, 41, 0.6);
+    }
+
+    .card-reminder,
+    .card-review {
+      background: rgba(68, 77, 161, 0.6);
+    }
+
+    .booking-table th,
+    .booking-table td {
+      font-size: 14px;
+    }
+
+    img.logo {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+    }
+
+    .card-header {
+      font-weight: bold;
+    }
+
+    /* Fixed topbar logo */
+    .topbar-logo {
+      display: block;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: 100px;         /* fixed height */
+      width: auto;          /* keep aspect ratio */
+      flex-shrink: 0;       /* prevent shrinking */
+    }
+
+    /* Remove flex gap & padding in topbar */
+    .topbar .d-flex.align-items-center {
+      gap: 0 !important;
+    }
+
+    .topbar {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+	  padding-left: 0 !important;
+    }
+	
+	.topbar .d-flex.align-items-center.gap-3 {
+      margin-left: auto;      
+      gap: 1rem !important;    
+      padding-right: 0.75rem;  
+    }
+	
+
+    .topbar .d-flex.align-items-center.gap-2.fw-bold {
+      position: relative;
+    }
+
+    #toggleSidebar {
+	  color: #27397f;
+      position: absolute;
+      left: 20px;   
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      border: none;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+      transition: all 0.3s ease;
+      cursor: pointer;
+   }
+   
+   .main-content .d-flex.align-items-center.mb-3 {
+      padding: 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: inline-flex; /* keeps width to content */
+    }
+
+
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="topbar d-flex justify-content-between align-items-center px-3 py-2 mb-0">
+      <div class="d-flex align-items-center gap-2 fw-bold">
+        <button id="toggleSidebar" class="btn btn-sm btn-light">
+          <i class="bi bi-list"></i>
+        </button>
+        <img src="dash.png" alt="Responsive Image" class="topbar-logo">
+      </div>
+      <div class="flex-grow-1 mx-3">
+        <input type="text" class="form-control" placeholder="Search...">
+      </div>
+
+      <div class="d-flex align-items-center gap-3 me-3">
+        <a href="#" class="text-white fs-5"><i class="bi bi-bell-fill"></i></a>
+        <a href="#" class="text-white fs-5"><i class="bi bi-chat-left-dots-fill"></i></a>
+        <a href="#" class="text-white fs-5"><i class="bi bi-calendar-event-fill"></i></a>
+      </div>
+
+<div class="dropdown">
+  <a class="text-white fw-semibold dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+    Admin 12345
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><a class="dropdown-item" href="#">Settings</a></li>
+    <li>
+      <a class="dropdown-item" href="#" onclick="logout()">Log Out</a>
+    </li>
+  </ul>
+</div>
+    </div>
+
+    <div class="layout">
+      <nav id="sidebar" class="sidebar">
+        <div class="text-center mb-4">
+          <img src="514023848_755243170409980_216939426091704006_n.png" alt="Responsive Image" class="logo">
+          <h5>Alayadi <span style="color:#fdd835;">Alsarea</span></h5>
+          <p>Technical Services</p>
+        </div>
+        <a href="#" class="nav-link active"><i class="bi bi-house-door-fill"></i> Dashboard</a>
+        <a href="#" class="nav-link" href="#" onclick="book()"><i class="bi bi-calendar-check-fill"></i> Booking</a>
+        <a href="#" class="nav-link href="#" onclick="emp()""><i class="bi bi-people-fill"></i> Employees</a>
+        <a href="#" class="nav-link" href="#" onclick="bill()"><i class="bi bi-receipt"></i> Billing</a>
+        <a href="#" class="nav-link" href="#" onclick="inv()"><i class="bi bi-box-seam"></i> Inventory</a>
+        <a href="#" class="nav-link" href="#" onclick="rep()"><i class="bi bi-bar-chart-fill"></i>  Reports & Analytics</a>
+      </nav>
+
+      
+      <main class="main-content">
+	  <div class="d-flex align-items-center mb-3 px-3">
+          <i class="bi bi-house-door-fill me-2 fs-10" style="color: gray;"></i>
+          <span class="fw fs-10" style="color: gray;">Dashboard / Home</span>
+       </div>
+        <div class="container-fluid px-0">
+          <!-- Summary Cards -->
+          <div class="row g-3 mb-3 px-3">
+            <div class="col-md-3">
+              <div class="card-box text-center website-views-card">
+                Website Views <br><h3>1,249</h3>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card-box text-center total-bookings-card">
+                Total Bookings <br><h3>40</h3>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card-box text-center active-cleaners-card">
+                Active Cleaners <br><h3>12</h3>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card-box text-center earnings-card">
+                Earnings <br><h3>50.60%</h3>
+              </div>
+            </div>
+          </div>
+		  
+
+          <!-- Inventory and Booking -->
+          <div class="row g-3 mb-3 px-3">
+            <div class="col-md-6">
+              <div class="card inventory-card">
+                <div class="card-header">Inventory Level Status</div>
+                <div class="card-body">
+                  <table class="table table-sm text-white">
+                    <thead><tr><th>Material</th><th>No. of Stocks</th><th>Status</th></tr></thead>
+                    <tbody>
+                      <tr><td>Glass Cleaner</td><td>10</td><td>Low 🔻</td></tr>
+                      <tr><td>Mild Detergent</td><td>11</td><td>Low 🔻</td></tr>
+                      <tr><td>Degreaser</td><td>20</td><td>High 🔺</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card booking-card">
+                <div class="card-header">Booking Overview</div>
+                <div class="card-body">
+                  <table class="table table-sm table-borderless booking-table text-white">
+                    <thead><tr><th>Date</th><th>Hours</th><th>Time</th><th>Location</th></tr></thead>
+                    <tbody>
+                      <tr><td>07/11/25</td><td>2 hrs</td><td>10:00am–12:00pm</td><td>UAQ</td></tr>
+                      <tr><td>07/11/25</td><td>2 hrs</td><td>12:00pm–2:00pm</td><td>Ajman</td></tr>
+                      <tr><td>07/11/25</td><td>3 hrs</td><td>3:00pm–6:00pm</td><td>Sharjah</td></tr>
+                      <tr><td>07/12/25</td><td>2 hrs</td><td>8:00am–10:00am</td><td>Dubai</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reminder and Feedback -->
+          <div class="row g-3 px-3 pb-3">
+            <div class="col-md-4">
+              <div class="card-reminder">
+                <h5>Reminder</h5>
+                <p>Don't forget to restock inventory!</p>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="card-review">
+                <h5>Customer Reviews & Feedback</h5>
+                <ul class="list-unstyled">
+                  <li>UAQ: ⭐⭐⭐⭐⭐</li>
+                  <li>Ajman: ⭐⭐⭐⭐☆</li>
+                  <li>Sharjah: ⭐⭐⭐☆☆</li>
+                  <li>Dubai: ⭐⭐⭐⭐☆</li>
+                </ul>
+                <a href="#" class="text-light">View feedback</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById("toggleSidebar").addEventListener("click", function () {
+      document.getElementById("sidebar").classList.toggle("collapsed");
+    });
+  </script>
+
+  <script src="logout.js"></script>
+  <script src="book.js"></script>
+  <script src="emp.js"></script>
+  <script src="bill.js"></script>
+  <script src="inv.js"></script>
+  <script src="rep.js"></script>
+</body>
+</html>

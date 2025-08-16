@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Cleaning Services</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('Login bg.png') center/cover no-repeat;
+      position: relative;
+    }
+
+    /* Dim background overlay */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* Waves overlay */
+    .wave-top, .wave-bottom {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      z-index: 1;
+    }
+    .wave-top { top: 0; }
+    .wave-bottom {
+      bottom: 0;
+      transform: rotate(180deg);
+    }
+
+    /* Login box */
+.login-box {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(
+    to bottom, /* vertical gradient */
+    rgba(135, 206, 235, 0.65) 0%,    /* Sky blue at top */
+    rgba(224, 255, 255, 0.65) 70%,    /* Pale blue in the middle */
+    rgba(255, 255, 255, 0.7) 100%    /* White at bottom */
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* Safari support */
+  padding: 2rem;
+  width: 400px;
+  text-align: center;
+}
+
+    .login-box img {
+      width: 100px;
+	  height: auto;
+      margin-bottom: 10px;
+    }
+
+    .login-box h2 {
+      font-size: 1.4rem;
+      margin-bottom: 0.2rem;
+    }
+    .login-box small {
+      color: #555;
+      display: block;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(to right, #7df2f5, #5ed4f0);
+      padding: 0.5rem 0.8rem;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.08);
+    }
+
+    .input-group i {
+      margin-right: 0.5rem;
+      color: #0b2e40;
+    }
+
+    .input-group input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-size: 0.9rem;
+      color: #000;
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .options a {
+      color: #173e9f;
+      text-decoration: none;
+      transition: text-decoration 0.2s;
+    }
+    .options a:hover {
+      text-decoration: underline;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 0.6rem;
+      background: linear-gradient(to bottom, #6ca0ff, #3b6ef6);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+	
+    .login-btn:hover {
+      background: linear-gradient(to bottom, #5c90ff, #2b5ef6);
+    }
+	
+	.img {
+	 width: 1000px;
+	}
+</style>
+</head>
+<body>
+
+<!-- Login Box -->
+<div class="login-box">
+  <img src="background.png" alt="Cleaning Icon" >
+  <h2>Welcome Back!</h2>
+  <small></small>
+  
+  <div class="input-group">
+    <i class="fa fa-user"></i>
+    <input type="text" id="acc" placeholder="Username">
+  </div>
+  
+  <div class="input-group">
+    <i class="fa fa-lock"></i>
+    <input type="password" id="pass" placeholder="Password">
+  </div>
+  
+  <div class="options">
+    <label><input type="checkbox"> Remember me</label>
+    <a href="#">Forgot Password?</a>
+  </div>
+  
+  <button class="login-btn">Login</button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getDatabase, ref, get, child, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAGeogk5DLDsjs_jZAI2uhQYAcQ7Sdzgkk",
+    authDomain: "test-81103.firebaseapp.com",
+    databaseURL: "https://test-81103-default-rtdb.firebaseio.com",
+    projectId: "test-81103",
+    storageBucket: "test-81103.firebasestorage.app",
+    messagingSenderId: "645468614742",
+    appId: "1:645468614742:web:54352103806e80a05e4bf7",
+    measurementId: "G-D6BBQ62V6W"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Auto-fill from storage
+  window.addEventListener("load", () => {
+    const savedUser = localStorage.getItem("savedUsername") || sessionStorage.getItem("savedUsername");
+    const savedPass = localStorage.getItem("savedPassword") || sessionStorage.getItem("savedPassword");
+
+    if (savedUser && savedPass) {
+      document.getElementById("acc").value = savedUser;
+      document.getElementById("pass").value = savedPass;
+      document.querySelector(".options input[type='checkbox']").checked = true;
+    }
+  });
+
+  // LOGIN BUTTON
+  document.querySelector(".login-btn").addEventListener("click", () => {
+    const username = document.getElementById("acc").value.trim();
+    const password = document.getElementById("pass").value.trim();
+    const rememberMe = document.querySelector(".options input[type='checkbox']").checked;
+
+    if (username === "" || password === "") {
+      alert("Please enter both username and password.");
+      return;
+    }
+
+    const dbRef = ref(db);
+
+    get(child(dbRef, "users")).then((snapshot) => {
+      if (snapshot.exists()) {
+        let found = false;
+
+        snapshot.forEach((userSnapshot) => {
+          const data = userSnapshot.val();
+          if (data.username === username && data.password === password) {
+            found = true;
+          }
+        });
+
+        if (found) {
+          if (rememberMe) {
+            localStorage.setItem("savedUsername", username);
+            localStorage.setItem("savedPassword", password);
+          } else {
+            sessionStorage.setItem("savedUsername", username);
+            sessionStorage.setItem("savedPassword", password);
+          }
+
+          window.location.href = "Capstone.html";
+        } else {
+          alert("Invalid username or password.");
+        }
+      } else {
+        alert("No user data found in database.");
+      }
+    }).catch((error) => {
+      console.error("Error reading data:", error);
+    });
+  });
+
+  // FORGOT PASSWORD
+  document.querySelector(".options a").addEventListener("click", (e) => {
+    e.preventDefault();
+    const username = prompt("Enter your username to reset password:");
+    if (!username) return;
+
+    const captcha = Math.floor(Math.random() * 9000) + 1000;
+    const captchaInput = prompt(`Enter the CAPTCHA: ${captcha}`);
+    if (parseInt(captchaInput) !== captcha) {
+      alert("CAPTCHA incorrect. Try again.");
+      return;
+    }
+
+    const newPass = prompt("Enter your new password:");
+    if (!newPass) return;
+
+    const dbRef = ref(db);
+    get(child(dbRef, "users")).then((snapshot) => {
+      if (snapshot.exists()) {
+        let updated = false;
+
+        snapshot.forEach((userSnapshot) => {
+          const key = userSnapshot.key;
+          const data = userSnapshot.val();
+
+          if (data.username === username) {
+            update(ref(db, "users/" + key), { password: newPass });
+            updated = true;
+          }
+        });
+
+        if (updated) {
+          alert("Password updated successfully!");
+        } else {
+          alert("Username not found.");
+        }
+      }
+    });
+  });
+</script>
+</body>
+</html>
