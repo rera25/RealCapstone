@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Information - Al Ayadi Al Sarea Cleaning Services</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+
+    <style>
+        /* Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans', sans-serif; }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: url('back.jpg') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            z-index: -1;
+        }
+
+        header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 7%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 60px; width: auto; object-fit: contain; }
+        .logo-text-group { display: flex; flex-direction: column; align-items: flex-start; }
+        .logo-text { font-size: 24px; font-weight: 800; color: #2764d4; }
+        .logo-text .highlight { color: #FFD94C; }
+        .logo-text .high { color: #D32F2F; }
+        .logo-subtext { font-size: 14px; color: #000; }
+
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .navlist { display: flex; gap: 20px; list-style: none; }
+        .navlist a {
+            color: #002366; font-weight: 600; font-size: 16px;
+            padding: 8px 12px; border-radius: 20px; transition: 0.3s; text-decoration: none;
+        }
+        .navlist a.active { background-color: #FFD94C; color: #002366; }
+        .navlist a:hover { background-color: rgba(255, 217, 76, 0.15); color: #FFD94C; }
+
+        .search-bar {
+            display: flex; align-items: center; background-color: transparent;
+            padding: 10px 20px; border-radius: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.08);
+            transition: width 0.5s ease-in-out; width: 150px;
+        }
+        .search-bar input { border: none; outline: none; font-size: 13px; background-color: transparent; color: #000; width: 100%; }
+        .search-bar i { cursor: pointer; font-size: 16px; color: #2764d4; }
+
+        .booking-section {
+            flex: 1; padding-top: 120px;
+            display: flex; justify-content: center; align-items: flex-start;
+        }
+        .booking-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 900px; width: 100%;
+            margin-top: 100px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            display: flex;
+        }
+        .booking-details {
+            width: 200px; background: #3535B0;
+            border-radius: 12px; color: white;
+            padding: 10px 0; list-style: none;
+        }
+        .booking-details li {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            font-size: 14px; display: flex; align-items: center;
+        }
+        .booking-details li:first-child { background-color: #3535B0; color: #89FF1F; font-weight: bold; }
+        .booking-details li i { margin-right: 10px; }
+
+
+        /* Second item (Date & Time) — Black & Bold */
+       .booking-details li:nth-child(2) {
+            color: black;
+            font-weight: bold;
+        }
+
+        .booking-form { flex: 1; padding-left: 20px; }
+        .booking-form h2 { margin-bottom: 10px; color: #002366; }
+        .booking-form label { font-weight: bold; display: block; margin-top: 12px; color: #002366; }
+
+        #calendar {
+            margin-top: 10px;
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-row { margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px; }
+        .btn { padding: 8px 20px; border: none; cursor: pointer; font-weight: bold; border-radius: 20px; }
+        .btn-back { background: #242478; color: white; border-radius: 10px; }
+        .btn-next { background: #3535B0; color: #fff; border-radius: 10px; }
+        .btn-next:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .footer { background-color: #002244; color: white; text-align: center; padding: 15px 10px; margin-top: auto; }
+        .footer p { font-size: 14px; }
+		
+		.form-columns {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.calendar-column {
+    flex: 1;
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #002366;
+}
+.calendar-header button {
+    background: #3535B0;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#bookingCalendar {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+#bookingCalendar th {
+    padding: 5px;
+    background: #f4f4f4;
+}
+#bookingCalendar td {
+    padding: 10px;
+    cursor: pointer;
+    position: relative;
+}
+#bookingCalendar td.available::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: #89FF1F;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#bookingCalendar td.reserved::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: orange;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#bookingCalendar td.booked::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: #D32F2F;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+#bookingCalendar td.selected {
+    background: #89FF1F;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.calendar-legend {
+    margin-top: 10px;
+    font-size: 14px;
+}
+.calendar-legend .legend {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.calendar-legend .available { background: #89FF1F; }
+.calendar-legend .booked { background: #D32F2F; }
+
+.details-column {
+    flex: 1;
+}
+
+.time-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+.time-btn {
+    flex: 1;
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.time-btn.active {
+    background: #3535B0;
+    color: white;
+    border-color: #3535B0;
+}
+
+.details-column input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+.note.green { color: green; font-size: 12px; }
+.note.red { color: red; font-size: 12px; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-container">
+        <img src="logo.png" alt="logo" class="logo-img">
+        <div class="logo-text-group">
+            <span class="logo-text">Al Ayadi <span class="highlight">Al</span> <span class="high">Sarea</span></span>
+            <span class="logo-subtext">Cleaning Services</span>
+        </div>
+    </div>
+    <div class="nav-right">
+        <ul class="navlist">
+            <li><a href="#" onclick="home()">Home</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Contact Us</a></li>
+        </ul>
+        <div class="search-bar">
+            <input type="text" placeholder="Search...">
+            <i class="bx bx-search"></i>
+        </div>
+    </div>
+</header>
+
+<section class="booking-section">
+    <div class="booking-card">
+        <ul class="booking-details">
+            <li><i class="bx bx-user"></i> Customer Details</li>
+            <li><i class="bx bx-calendar"></i> Date & Time</li>
+            <li><i class="bx bx-brush"></i> Type of Cleaning</li>
+            <li><i class="bx bx-group"></i> Preferred Cleaning Agents</li>
+            <li><i class="bx bx-edit-alt"></i> Special Requests</li>
+            <li><i class="bx bx-receipt"></i> Billing Summary</li>
+            <li><i class="bx bx-check-circle"></i> Booking Confirmation</li>
+        </ul>
+
+<div class="booking-form">
+    <h2>Booking Information</h2>
+
+    <div class="form-columns">
+        <!-- Calendar Column -->
+        <div class="calendar-column">
+            <div class="calendar-header">
+                <button id="prevMonth">&lt;</button>
+                <span id="monthYear"></span>
+                <button id="nextMonth">&gt;</button>
+            </div>
+            <table id="bookingCalendar">
+                <thead>
+                    <tr>
+                        <th>Sun</th><th>Mon</th><th>Tue</th>
+                        <th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div class="calendar-legend">
+                <span class="legend available"></span> Available
+                <span class="legend booked"></span> Fully Booked
+            </div>
+        </div>
+
+        <!-- Form Column -->
+        <div class="details-column">
+            <label>Time:</label>
+            <div class="time-buttons">
+                <button type="button" class="time-btn" data-time="Morning">🌤 Morning</button>
+                <button type="button" class="time-btn" data-time="Afternoon">🌇 Afternoon</button>
+                <button type="button" class="time-btn" data-time="Night">🌙 Night Time</button>
+            </div>
+
+            <label>Hours:</label>
+            <input type="number" id="hoursInput" min="2" value="2">
+            <small class="note green">Minimum of 2 hours</small>
+
+            <label>Number of Cleaners:</label>
+            <input type="number" id="cleanersInput" min="1" value="1">
+            <small class="note red">25 AED per cleaner</small>
+
+            <input type="hidden" id="selectedDate">
+            <input type="hidden" id="selectedTime">
+
+            <div class="btn-row">
+                <button class="btn btn-back" type="button" onclick="back()">Back</button>
+                <button class="btn btn-next" id="nextBtn" disabled>Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+</section>
+
+<footer class="footer">
+    <p>&copy; 2025 Al Ayadi Al Sarea Cleaning Services. All Rights Reserved.</p>
+</footer>
+
+<script src="home.js"></script>
+<script src="back.js"></script>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<!-- Firebase Script -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, get, child, set } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAGeogk5DLDsjs_jZAI2uhQYAcQ7Sdzgkk",
+    authDomain: "test-81103.firebaseapp.com",
+    databaseURL: "https://test-81103-default-rtdb.firebaseio.com",
+    projectId: "test-81103",
+    storageBucket: "test-81103.firebasestorage.app",
+    messagingSenderId: "645468614742",
+    appId: "1:645468614742:web:54352103806e80a05e4bf7",
+    measurementId: "G-D6BBQ62V6W"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const selectedDateInput = document.getElementById('selectedDate');
+const selectedTimeInput = document.getElementById('selectedTime');
+const nextBtn = document.getElementById('nextBtn');
+
+// Helper to check both conditions
+function updateNextButtonState() {
+    const hasDate = selectedDateInput.value.trim() !== "";
+    const hasTime = selectedTimeInput.value.trim() !== "";
+    nextBtn.disabled = !(hasDate && hasTime);
+}
+
+// Demo availability
+const availability = {
+    "2025-08-13": "booked",
+    "2025-08-14": "booked",
+    "2025-08-16": "available"
+};
+
+// Calendar build
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
+function renderCalendar(month, year) {
+    const monthYear = document.getElementById("monthYear");
+    const tbody = document.querySelector("#bookingCalendar tbody");
+    tbody.innerHTML = "";
+
+    const firstDay = new Date(year, month).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+    monthYear.textContent = `${monthNames[month]} ${year}`;
+
+    let date = 1;
+    for (let i = 0; i < 6; i++) {
+        const row = document.createElement("tr");
+
+        for (let j = 0; j < 7; j++) {
+            const cell = document.createElement("td");
+
+            if (i === 0 && j < firstDay) {
+                cell.textContent = "";
+            } else if (date > daysInMonth) {
+                cell.textContent = "";
+            } else {
+                const dateStr = `${year}-${String(month+1).padStart(2,"0")}-${String(date).padStart(2,"0")}`;
+                cell.textContent = date;
+
+                if (availability[dateStr] === "available") cell.classList.add("available");
+                if (availability[dateStr] === "booked") cell.classList.add("booked");
+
+                cell.addEventListener("click", () => {
+                    if (cell.classList.contains("booked")) return;
+                    document.querySelectorAll("#bookingCalendar td").forEach(td => td.classList.remove("selected"));
+                    cell.classList.add("selected");
+                    selectedDateInput.value = dateStr;
+                    updateNextButtonState(); // check conditions
+                });
+                date++;
+            }
+            row.appendChild(cell);
+        }
+        tbody.appendChild(row);
+    }
+}
+
+document.getElementById("prevMonth").addEventListener("click", () => {
+    currentMonth--;
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    renderCalendar(currentMonth, currentYear);
+});
+document.getElementById("nextMonth").addEventListener("click", () => {
+    currentMonth++;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    renderCalendar(currentMonth, currentYear);
+});
+
+renderCalendar(currentMonth, currentYear);
+
+// Time button selection
+document.querySelectorAll(".time-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".time-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedTimeInput.value = btn.dataset.time;
+        updateNextButtonState(); // check conditions
+    });
+});
+
+// Save to Firebase
+// Save to Firebase
+nextBtn.addEventListener('click', async () => {
+    try {
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, "schedule"));
+        const date = selectedDateInput.value;
+        const time = selectedTimeInput.value;
+
+        // Check for conflicts
+        if (snapshot.exists()) {
+            const schedules = snapshot.val();
+            const conflict = Object.values(schedules).some(
+                booking => booking.detailsDate === date && booking.time === time
+            );
+            if (conflict) {
+                alert(`That slot on ${date} at ${time} is already booked! Please choose another.`);
+                return;
+            }
+        }
+
+        // Generate next ID
+        let nextId = snapshot.exists() ? Object.keys(snapshot.val()).length + 1 : 1;
+        const bookingId = `id${nextId}`;
+        const customerDetails = JSON.parse(localStorage.getItem("bookingForm")) || {};
+
+        // Booking data
+        const bookingData = {
+            id: bookingId,
+            ...customerDetails,
+            detailsDate: date,
+            time: time,
+            hours: document.getElementById("hoursInput").value,
+            cleaners: document.getElementById("cleanersInput").value,
+            status: "pending",
+            cleaner: ""
+        };
+
+        // Save to schedule
+        await set(ref(db, `schedule/${bookingId}`), bookingData);
+
+        // Change selected date to orange (reserved)
+        document.querySelectorAll("#bookingCalendar td").forEach(td => {
+            if (td.classList.contains("selected")) {
+                td.classList.remove("available", "booked");
+                td.classList.add("reserved");
+            }
+        });
+
+        alert(`Booking saved successfully in 'schedule' with ID: ${bookingId}`);
+
+    } catch (err) {
+        console.error("Error saving booking:", err);
+        alert("Failed to save booking. Please try again.");
+    }
+});
+
+</script>
+
+</body>
+</html>
